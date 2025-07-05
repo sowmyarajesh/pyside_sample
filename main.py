@@ -104,8 +104,9 @@ class MyApp(QMainWindow):
         col1_frame = create_card_frame(color="rgb(255,255,255)")
         col1_layout = QVBoxLayout(col1_frame)
         col1_layout.addWidget(QLabel("Column 1 (40%)"))
-        self.gridImage = ImageGridWindow([])
-        self.setGridView(options[0])
+        self.gridImage = self.setGridView(options[0])
+        col1_layout.addWidget(self.gridImage)
+       
         col1_layout.addStretch(1) # Push content to top
 
         # Column 2 (20% screen width or max 250px width)
@@ -133,6 +134,7 @@ class MyApp(QMainWindow):
         col3_row2_layout = QVBoxLayout(col3_row2_frame)
         col3_row2_layout.addWidget(QLabel("Col 3 - Row 2 (Rest)"))
         self.patchImg = ImageViewer(None)
+        col3_row2_layout.addWidget(self.patchImg)
         col3_row2_layout.addStretch(1)
 
 
@@ -157,12 +159,14 @@ class MyApp(QMainWindow):
         print("{} selected".format(value))
         patches = [os.path.join(DATA_DIR,value,"patches",i) for i in os.listdir(os.path.join(DATA_DIR,value,"patches"))]
         print(len(patches))
-        self.gridImage = ImageGridWindow(patches)
-        self.gridImage.patch_clicked.connect(self.setPatchImage)
+        gridImage = ImageGridWindow(patches)
+        gridImage.patch_clicked.connect(self.setPatchImage)
+        return gridImage
     
     @Slot()
     def setPatchImage(self,image_path):
         self.patchImg.setImage(image_path)
+        print(f"Patch image set to: {image_path}")
 
 
 if __name__ == "__main__":

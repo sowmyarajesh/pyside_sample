@@ -2,7 +2,6 @@ import sys
 from PySide6.QtWidgets import (QApplication,QMainWindow, QWidget, QGridLayout, QLabel)
 from PySide6.QtGui import QPixmap, Qt
 from PySide6.QtCore import Signal
-from PySide6.QtCore import QSize
 
 from AppWidgets.MiniWidgets import ClickableLabel
 from AppWidgets.ImageViewer import ImageViewer
@@ -28,19 +27,17 @@ class ImageGridWindow(QMainWindow):
             for image_path in image_paths:
                 print(image_path)
                 image_label = ClickableLabel(self)
-                image_label.setGeometry(0,0,150,150) ##XYWH
+                image_label.setGeometry(0,0,15,15) ##XYWH
 
                 pixmap = QPixmap(image_path)
-                res = QSize(100,100) # Resize to 100x100 pixels
-                pixmap = pixmap.scaled(res, Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 image_label.setPixmap(pixmap)
                 image_label.setAlignment(Qt.AlignCenter)
                 needed_style= highlight_image_label(color="rgb(235,0,0)")
                 if (row+col)%10 ==0:  ## THIS SECTION HAS TO BE CHANGED TO PREDICTION BASED
                     image_label.setStyleSheet(needed_style)
                 # update lambda to map the path to this image click
-                image_label.widgetClicked.connect(lambda path=image_path: (self.image_clicked(path), print(f"Image clicked: {path}")))
-
+                image_label.widgetClicked.connect(lambda  image_path=image_path: self.image_clicked(image_path))  
+                
                 grid_layout.addWidget(image_label, row, col)
 
                 col += 1
