@@ -9,11 +9,11 @@ import os
 def cut_image_into_4x4(image_path, output_prefix="patch", output_dir="data"):
     img = Image.open(image_path)
     width, height = img.size
-    patch_width = width // 3
-    patch_height = height // 3
+    patch_width = width // 4
+    patch_height = height // 4
 
-    for i in range(3):
-        for j in range(3):
+    for i in range(4):
+        for j in range(4):
             left = j * patch_width
             upper = i * patch_height
             right = (j + 1) * patch_width

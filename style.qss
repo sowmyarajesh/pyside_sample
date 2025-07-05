@@ -16,6 +16,7 @@ QListWidget::item:selected {
 QLabel {
     background-color: #FFFFFF;
     qproperty-alignment: AlignCenter;
+    color:rgb(23,23,23);
 }
 
 QLabel#title {
@@ -28,4 +29,9 @@ QPushButton {
     padding: 20px;
     font-size: 18px;
     cursor: pointer;
+}
+QComboBox {
+    background-color: #FFFFFF;
+    qproperty-alignment: AlignCenter;
+    color:rgb(23,23,23);
 }

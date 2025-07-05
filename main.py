@@ -2,10 +2,14 @@ from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
     QLabel, QPushButton, QComboBox, QFrame, QSizePolicy, QMenuBar
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Slot
+import os
 
 from AppWidgets.MiniWidgets import create_card_frame
+from AppWidgets.ImageGrid import ImageGridWindow
+from AppWidgets.ImageViewer import ImageViewer
 
+DATA_DIR = "data/images"
 
 class MyApp(QMainWindow):
     def __init__(self):
@@ -29,13 +33,13 @@ class MyApp(QMainWindow):
         self.menu_bar = self.menuBar()
         self.menu_bar.setStyleSheet("background-color: red; color: white;")
 
-        app_name_label = QLabel("AppName", self.menu_bar)
-        app_name_label.setStyleSheet("padding: 5px; font-weight: bold; font-size: 16px;") # Add padding for spacing
+        # app_name_label = QLabel("AppName", self.menu_bar)
+        # app_name_label.setStyleSheet("padding: 5px; font-weight: bold; font-size: 16px;") # Add padding for spacing
         # You'd typically use QActions for menu items, but for simple buttons in the menubar, QLabel and QWidget can be styled.
         # However, for true menu functionality (dropdowns, shortcuts), QAction is the way.
         # For simplicity, let's just make "menu" items as actions
-        view_list_action = self.menu_bar.addAction("View List")
-        download_report_action = self.menu_bar.addAction("Download Report")
+        view_list_action = self.menu_bar.addAction("Menu1")
+        download_report_action = self.menu_bar.addAction("Menu2")
 
         # Align actions to the right (QMenuBar handles this automatically for actions)
         # For a more custom layout within the menu bar, you'd embed a QWidget and use a QHBoxLayout within it.
@@ -68,20 +72,24 @@ class MyApp(QMainWindow):
 
         # Example Dropdowns
         dropdown1 = QComboBox()
-        dropdown1.addItems(["Option 1", "Option 2"])
+        dropdown1.setGeometry(0,0,40,100)
+        options = os.listdir(DATA_DIR)
+        dropdown1.addItems(list(options))
         dropdown1.setPlaceholderText("Select 1")
+        dropdown1.setStyleSheet("background-color:rgb(255,255,255);color:rgb(23,23,23)")
+        dropdown1.currentTextChanged.connect(self.setGridView)
 
-        dropdown2 = QComboBox()
-        dropdown2.addItems(["Option A", "Option B"])
-        dropdown2.setPlaceholderText("Select 2")
+        # dropdown2 = QComboBox()
+        # dropdown2.addItems(["Option A", "Option B"])
+        # dropdown2.setPlaceholderText("Select 2")
 
-        dropdown3 = QComboBox()
-        dropdown3.addItems(["Item X", "Item Y"])
-        dropdown3.setPlaceholderText("Select 3")
+        # dropdown3 = QComboBox()
+        # dropdown3.addItems(["Item X", "Item Y"])
+        # dropdown3.setPlaceholderText("Select 3")
 
         dropdown_layout.addWidget(dropdown1)
-        dropdown_layout.addWidget(dropdown2)
-        dropdown_layout.addWidget(dropdown3)
+        # dropdown_layout.addWidget(dropdown2)
+        # dropdown_layout.addWidget(dropdown3)
 
         main_content_layout.addWidget(dropdown_frame)
 
@@ -96,6 +104,8 @@ class MyApp(QMainWindow):
         col1_frame = create_card_frame(color="rgb(255,255,255)")
         col1_layout = QVBoxLayout(col1_frame)
         col1_layout.addWidget(QLabel("Column 1 (40%)"))
+        self.gridImage = ImageGridWindow([])
+        self.setGridView(options[0])
         col1_layout.addStretch(1) # Push content to top
 
         # Column 2 (20% screen width or max 250px width)
@@ -122,6 +132,7 @@ class MyApp(QMainWindow):
         col3_row2_frame = create_card_frame(color="rgb(255,255,255)")
         col3_row2_layout = QVBoxLayout(col3_row2_frame)
         col3_row2_layout.addWidget(QLabel("Col 3 - Row 2 (Rest)"))
+        self.patchImg = ImageViewer(None)
         col3_row2_layout.addStretch(1)
 
 
@@ -141,6 +152,17 @@ class MyApp(QMainWindow):
         main_content_layout.addWidget(columns_frame)
 
         self.main_v_layout.addWidget(main_content_container)
+
+    def setGridView(self, value):
+        print("{} selected".format(value))
+        patches = [os.path.join(DATA_DIR,value,"patches",i) for i in os.listdir(os.path.join(DATA_DIR,value,"patches"))]
+        print(len(patches))
+        self.gridImage = ImageGridWindow(patches)
+        self.gridImage.patch_clicked.connect(self.setPatchImage)
+    
+    @Slot()
+    def setPatchImage(self,image_path):
+        self.patchImg.setImage(image_path)
 
 
 if __name__ == "__main__":

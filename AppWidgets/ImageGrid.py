@@ -5,7 +5,7 @@ from PySide6.QtCore import Signal
 
 from AppWidgets.MiniWidgets import ClickableLabel
 from AppWidgets.ImageViewer import ImageViewer
-from assets.WidgetStyles import highlight_image_label
+from assets.widgetStyles import highlight_image_label
 
 
 class ImageGridWindow(QMainWindow):
@@ -25,6 +25,7 @@ class ImageGridWindow(QMainWindow):
             row = 0
             col = 0
             for image_path in image_paths:
+                print(image_path)
                 image_label = ClickableLabel(self)
                 image_label.setGeometry(0,0,150,150) ##XYWH
 
