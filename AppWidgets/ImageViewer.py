@@ -11,23 +11,22 @@ class ImageViewer(QMainWindow):
     def __init__(self,parent=None):
         super().__init__(parent)
         self.central_widget = QWidget()
-        self.image=QLabel()
         self.setCentralWidget(self.central_widget)
-        
 
-    def paintEvent(self, event):
-        painter = QPainter(self)        
-        if not self.image.isNull():            
-            # Calculate scaled image size keeping the aspect ratio
-            scaled_image = self.image.pixmap().scaled(self.size(), Qt.AspectRatioMode.KeepAspectRatio, 
-                                                Qt.TransformationMode.SmoothTransformation)
-            x_offset =(self.width() - scaled_image.width())//2
-            y_offset = (self.height() - scaled_image.height()) // 2
-            painter.drawImage(x_offset, y_offset, scaled_image)
-            painter.end()
+        self.layout = QVBoxLayout(self.central_widget)
+        self.image_label = QLabel()
+        self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # self.image_label.setSizePolicy(QLabel.Ignored, QLabel.Ignored)
+        self.image_label.setScaledContents(True)  # Important: allows QLabel to scale the image
+
+        self.layout.addWidget(self.image_label)
     
     @Slot()
     def setImage(self, img_path):
         pix = QPixmap(img_path)
-        self.image.setPixmap(pix)
+        if not pix.isNull():
+            self.image_label.setPixmap(pix)
+            self.image_label.adjustSize()
+        else:
+            QMessageBox.warning(self, "Image Load Error", f"Could not load image from {img_path}")
         
